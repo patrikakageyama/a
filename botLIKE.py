@@ -169,25 +169,19 @@ def run(playwright):
     solve_captcha(page)
 
     service_name = "Hearts"  
-    print(f"[*] Opening the '{service_name}' service...")
+print(f"[*] Opening the '{service_name}' service...")
+input("[*] Press ENTER when you're ready to click the Hearts button...")
 
-    try:
-        # Use the specific class for the Hearts button
-        btn_locator = page.locator("button", has_text=re.compile(r"hearts", re.IGNORECASE))
-        if btn_locator.count() == 0:
-            # fallback: wait for any button containing 'hearts' to appear
-            print("[*] Hearts button not found yet, waiting for page to settle...")
-            page.wait_for_selector("button", timeout=15000)
-            btn_locator = page.locator("button", has_text=re.compile(r"hearts", re.IGNORECASE))
-        btn_locator.first.click(timeout=10000)
-        
-        print("[*] Clicked Hearts! Waiting 5 seconds before proceeding...")
-        time.sleep(5)
-        _check_and_close_ad(page)
-    except Exception as e:
-        print(f"[-] Could not find '{service_name}' button. Are we on the right page? Error: {e}")
-        browser.close()
-        return
+try:
+    btn_locator = page.locator("button.t-hearts-button")
+    btn_locator.click(timeout=10000)
+    print("[*] Clicked Hearts! Waiting 5 seconds before proceeding...")
+    time.sleep(5)
+    _check_and_close_ad(page)
+except Exception as e:
+    print(f"[-] Could not find '{service_name}' button. Are we on the right page? Error: {e}")
+    browser.close()
+    return
     
     visible_input = page.locator("input[type='search']:visible")
     visible_input.wait_for(state="visible", timeout=30000)
