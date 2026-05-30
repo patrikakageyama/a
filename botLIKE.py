@@ -173,8 +173,14 @@ def run(playwright):
 
     try:
         # Use the specific class for the Hearts button
-        btn_locator = page.locator("button.t-hearts-button")
-        btn_locator.click(timeout=10000)
+        btn_locator = page.locator("button", has_text=re.compile(r"hearts", re.IGNORECASE))
+        if btn_locator.count() == 0:
+            # fallback: wait for any button containing 'hearts' to appear
+            print("[*] Hearts button not found yet, waiting for page to settle...")
+            page.wait_for_selector("button", timeout=15000)
+            btn_locator = page.locator("button", has_text=re.compile(r"hearts", re.IGNORECASE))
+        btn_locator.first.click(timeout=10000)
+        
         print("[*] Clicked Hearts! Waiting 5 seconds before proceeding...")
         time.sleep(5)
         _check_and_close_ad(page)
